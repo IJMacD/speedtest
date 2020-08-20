@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 50">
+    <style>
+    circle {
+        animation: oscillate 2s infinite;
+    }
+    @keyframes oscillate {
+        0% { transform: translateX(0); fill: #61DAFB; }
+
+        40% { fill: #61DAFB; }
+        50% { transform: translateX(600px);  fill: #FB61DA; }
+
+        90% { fill: #FB61DA; }
+        100% { transform: translateX(0); fill: #61DAFB }
+    }
+    </style>
+    <g >
+        <circle cx="100" cy="50%" r="25" fill="#61DAFB" />
+    </g>
+</svg>
