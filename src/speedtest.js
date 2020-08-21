@@ -2,7 +2,8 @@ import fetchWithProgress from './fetchWithProgress';
 
 const pkg = require('../package.json');
 
-const ROOT = pkg.homepage;
+const hp = new URL(pkg.homepage);
+const ROOT = hp.pathname === "/" ? "" : hp.pathname;
 
 const PING_COUNT = 20;
 const PING_WARMUP = 5;
@@ -25,7 +26,7 @@ const UPLOAD_MIN_DURATION = 5000;
 
 export async function pingTest () {
     performance.clearResourceTimings();
-    for (let i = -PING_WARMUP; i < PING_COUNT; i++) await fetch(PING_TARGET, { headers: { ["Cache-Control"]: "no-cache" } });
+    for (let i = -PING_WARMUP; i < PING_COUNT; i++) await fetch(PING_TARGET, { headers: { "Cache-Control": "no-cache" } });
     /** @type {PerformanceResourceTiming[]} */
     let entries = (performance.getEntriesByType("resource"));
     entries = entries.filter(e => e.name.endsWith(PING_TARGET));
@@ -54,7 +55,7 @@ async function downloadFile (path, size, progress) {
     const start = performance.now();
     await fetchWithProgress(path, {
         headers: {
-            ["Cache-Control"]: "no-cache",
+            "Cache-Control": "no-cache",
         },
         progress: p => {
             const time = performance.now() - start;

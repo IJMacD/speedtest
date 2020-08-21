@@ -3,6 +3,8 @@ import logo from './logo.svg';
 import pingingIcon from './pinging.svg';
 import './App.css';
 import { pingTest, downloadTest, uploadTest } from './speedtest';
+import Graph from './graph';
+import { formatSpeed } from './util';
 
 const STATE_START = "start";
 const STATE_TESTING_PING = "pinging";
@@ -17,15 +19,15 @@ function App() {
   const [ pendingDownSpeed, setPendingDownSpeed ] = React.useState(0);
   const [ upSpeed, setUpSpeed ] = React.useState(0);
   const [ pendingUpSpeed, setPendingUpSpeed ] = React.useState(0);
+  const [ pingError, setPingError ] = React.useState(null);
   const [ downloadError, setDownloadError ] = React.useState(null);
   const [ uploadError, setUploadError ] = React.useState(null);
 
   React.useEffect(() => {
     if (state === STATE_TESTING_PING) {
-      pingTest().then(t => {
-        setState(STATE_TESTING_DOWN);
-        setPingTime(t);
-      });
+      pingTest()
+      .then(setPingTime, setPingError)
+      .then(() => setState(STATE_TESTING_DOWN));
     }
     else if (state === STATE_TESTING_DOWN) {
       downloadTest(setPendingDownSpeed)
@@ -59,14 +61,19 @@ function App() {
           </button>
         }
         
-        { state === STATE_TESTING_PING && 
-          <p>
-            Pinging <br/>
-            <img src={pingingIcon} width={400} />
-          </p>
-        }
-        { pingTime > 0 &&
-          <p>Ping Time: {pingTime.toFixed(3)} ms</p>
+        { pingError ?
+          <p>Error pinging</p> 
+          :
+          ( state === STATE_TESTING_PING ? 
+              <p>
+                Pinging <br/>
+                <img src={pingingIcon} width={400} alt="" />
+              </p>
+            :
+            pingTime > 0 &&
+              <p>Ping Time: {pingTime.toFixed(3)} ms</p>
+            
+          )
         }
 
         {
@@ -75,13 +82,17 @@ function App() {
           : (
             state === STATE_TESTING_DOWN ?  
             (
-              <p>
-                Running Download Test <br/>
-                {formatSpeed(pendingDownSpeed)}
-              </p>
+              <>
+                <p>Running Download Test</p>
+                <Graph value={pendingDownSpeed} color="#61DAFB" width={300} />
+                <p>{formatSpeed(pendingDownSpeed)}</p>
+              </>
             ) : 
             downSpeed > 0 &&
-              <p>Download Speed: {formatSpeed(downSpeed)}</p>
+              <>
+                <p>Download Speed: {formatSpeed(downSpeed)}</p>
+                <Graph value={downSpeed} color="#61DAFB" />
+              </>
           )
         }
 
@@ -91,18 +102,22 @@ function App() {
           : (
             state === STATE_TESTING_UPLOAD ?  
             (
-              <p>
-                Running Upload Test <br/>
-                {formatSpeed(pendingUpSpeed)}
-              </p>
+              <>
+                <p>Running Upload Test</p>
+                <Graph value={pendingUpSpeed} color="#FB61DA" /><br/>
+                <p>{formatSpeed(pendingUpSpeed)}</p>
+              </>
             ) : 
             upSpeed > 0 &&
-              <p>Upload Speed: {formatSpeed(upSpeed)}</p>
+              <>
+                <p>Upload Speed: {formatSpeed(upSpeed)}</p>
+                <Graph value={upSpeed} color="#FB61DA" />
+              </>
           )
         }
 
         { state === STATE_COMPLETE && 
-          <button onClick={() => reset()}>Start Again</button>
+          <p><button onClick={() => reset()}>Start Again</button></p>
         }
       </header>
     </div>
@@ -110,9 +125,3 @@ function App() {
 }
 
 export default App;
-
-function formatSpeed (bytesPerSecond) {
-  if (bytesPerSecond > 1e6) return `${(bytesPerSecond / 1e6).toFixed(1)} MB/s`;
-  if (bytesPerSecond > 1e3) return `${(bytesPerSecond / 1e3).toFixed(1)} KB/s`;
-  return `${bytesPerSecond.toFixed(1)} B/s`;
-}

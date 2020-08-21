@@ -12,8 +12,7 @@
 export default function fetchWithProgress (url, options={}) {
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
-        const result = {};
-
+        
         xhr.open(options.method || "GET", url);
 
         if (options.headers) {
