@@ -1,6 +1,8 @@
 import fetchWithProgress from './fetchWithProgress';
 
-const ROOT = "/speedtest";
+const pkg = require('../package.json');
+
+const ROOT = pkg.homepage;
 
 const PING_COUNT = 20;
 const PING_WARMUP = 5;
@@ -92,7 +94,7 @@ async function uploadFile (path, data, progress) {
     await fetchWithProgress(path, {
         method: "post",
         body,
-        progress: p => {
+        uploadProgress: p => {
             const time = performance.now() - start;
             const uploaded = data.byteLength * p / 100;
             const speed = uploaded / time * 1000;

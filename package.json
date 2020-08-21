@@ -4,7 +4,7 @@
   "repository": {
     "url": "https://github.com/IJMacD/speedtest.git"
   },
-  "homepage": "https://ijmacd.github.io/speedtest",
+  "homepage": "https://speedtest.ijmacd.com",
   "description": "A simple-as-possible speed test which can happily be hosted on static infrastructure.",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
