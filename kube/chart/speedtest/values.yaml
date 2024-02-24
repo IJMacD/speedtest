@@ -1,0 +1,10 @@
+web:
+  replicaCount: 1
+  repository:
+    image: docker.io/ijmacd/speedtest
+    tag: ""
+  hostname: speedtest.ijmacd.com
+  tls:
+    enabled: false
+  local:
+    enabled: false

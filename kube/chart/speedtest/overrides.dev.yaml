@@ -1,0 +1,9 @@
+web:
+  repository:
+    image: k3d-registry.localhost:5111/ijmacd/speedtest
+    tag: ""
+  hostname: speedtest.localhost
+  tls:
+    enabled: true
+  local:
+    enabled: false
